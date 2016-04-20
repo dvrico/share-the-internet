@@ -34,7 +34,7 @@ io.on('connection', function(socket) {
   socket.on('add user', function(username) {
     if (addedUser) return;
 
-    // we store the username in the socket seesoin for this client
+    // we store the username in the socket seesion for this client
     socket.username = username;
     ++numUsers;
     addedUser = true;
@@ -45,6 +45,20 @@ io.on('connection', function(socket) {
     socket.broadcast.emit('user joined', {
       username: socket.username,
       numUsers: numUsers
+    });
+  });
+
+  // when the client emits 'typing', we broadcast it to others
+  socket.on('typing', function() {
+    socket.broadcast.emit('typing', {
+      username: socket.username
+    });
+  });
+
+  // when the client emits 'stop typing', we broadcast it to others
+  socket.on('stop typing', function() {
+    socket.broadcast.emit('stop typing', {
+      username: socket.username
     });
   });
 
