@@ -62,4 +62,17 @@ io.on('connection', function(socket) {
     });
   });
 
+  // when the user disconnects
+  socket.on('disconnect', function() {
+    if (addedUser) {
+      --numUsers;
+
+      //echo globally that this client has left
+      socket.broadcast.emit('user left', {
+        username: socket.username,
+        numUsers: numUsers
+      });
+    }
+  });
+
 });
