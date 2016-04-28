@@ -35,19 +35,23 @@ ul {
   height: 100%;
   margin: 0;
   padding: 0;
-  width: 100%;
+  width: 49%;
+  display: inline-block;
+
+  //border: 2px solid red;
 }
 
 .page {
   height: 100%;
   position: absolute;
-  width: 100%;
+  width: 50%;
 }
 
 /* Login Page */
 
 .login.page { /* Mess with this selector */
   background-color: #000;
+  width: 100%;
 }
 
 .login.page .form {
@@ -145,4 +149,33 @@ ul {
   position: absolute;
   right: 0;
   width: 100%;
+}
+
+/* Sharing vids section */
+
+.sharing {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  height: 100%;
+  width: 50%;
+
+  //border: 3px solid blue;
+}
+
+.video {
+  float: left;
+  width: 100%;
+  height: 50%;
+  //border: 3px solid green;
+}
+
+.video iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.inputVid {
+  width: 50%;
+  left: 50%;
 }
