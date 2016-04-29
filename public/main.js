@@ -5,14 +5,17 @@ $(function() {
   // Initialize variables
   var $window = $(window);
   var $usernameInput = $('.usernameInput');
+  var $userLog = $('.users');
   var $messages = $('.messages');
   var $inputMessage = $('.inputMessage');
 
   var $loginPage = $('.login.page');
   var $chatPage = $('.chat.page');
+  var $sharingPage = $('.shareBlock');
 
   // Prompt for setting a username
   var username;
+  var usersInChat = []
   var connected = false;
   var typing = false;
   var lastTypingTime;
@@ -21,13 +24,17 @@ $(function() {
   var socket = io();
 
   function addParticipantsMessage(data) {
-    var message = '';
-    if (data.numUsers === 1) {
-      message += "there's 1 participant";
-    } else {
-      message += "there are " + data.numUsers + " participants";
+    var message = ''
+    usersInChat.push(data.username)
+    for(var i = 0; i < usersInChat.length; i++) {
+      message += ' ' + usersInChat[i];
     }
-    log(message);
+
+    var options = {
+      userLogInfo: true
+    }
+
+    log(message, options);
   }
 
   // Sets the client's username
@@ -38,6 +45,7 @@ $(function() {
     if(username) {
       $loginPage.fadeOut();
       $chatPage.show();
+      $sharingPage.show();
       $loginPage.off('click');
       $currentInput = $inputMessage.focus();
 
@@ -57,6 +65,8 @@ $(function() {
       addChatMessage({
         username: username,
         message: message
+      }, {
+        message: true
       });
       // tell the server to execute 'new message' and send along one parameter
       socket.emit('new message', message);
@@ -121,17 +131,21 @@ $(function() {
     if (typeof options.fade === 'undefined') {
       options.fade = true;
     }
-    if (typeof options.prepend === 'undefined') {
-      options.prepend = false;
+    if (typeof options.userLogInfo === 'undefined') {
+      options.userLogInfo = false;
+    }
+    if (typeof options.message === 'undefined') {
+      options.message = false;
     }
 
     // Apply options
     if (options.fade) {
       $el.hide().fadeIn(FADE_TIME);
     }
-    if (options.prepend) {
-      $messages.prepend($el);
-    } else {
+    if (options.userLogInfo) {
+      $userLog.append($el);
+    }
+    if (options.message) {
       $messages.append($el);
     }
     $messages[0].scrollTop = $messages[0].scrollHeight;
@@ -206,9 +220,10 @@ $(function() {
   socket.on('login', function(data) {
     connected = true;
     // Display the welcome message
-    var message = "Welcome to Sharing the Internet";
+    var message = "Welcome to Sharing the Internet! Participants:";
     log(message, {
-      prepend: true
+      prepend: true,
+      userLogInfo: true
     });
     addParticipantsMessage(data);
   });

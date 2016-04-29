@@ -100,6 +100,10 @@ ul {
   font-size: 150%;
 }
 
+.userLog {
+  font-size: 150%;
+}
+
 .inputMessage {
   font-size: 100%;
 }
@@ -107,23 +111,34 @@ ul {
 .log {
   color: gray;
   font-size: 70%;
-  margin: 5px;
+  margin: 10px 5px 15px 5px;
   text-align: center;
 }
 
 /* Messages */
 
+.userLog {
+  position: absolute;
+  top: 0;
+  border: 3px solid #000;
+  width: 98.7%;
+  height: 12%;
+
+  //background-color: #fff;
+}
 
 .chatArea {
   height: 100%;
   padding-bottom: 60px;
+  border: 2px solid #000;
+  margin-right: 7px;
 }
 
 .messages {
   height: 100%;
   margin: 0;
   overflow-y: scroll;
-  padding: 10px 20px 10px 20px;
+  padding: 85px 20px 10px 20px;
 }
 
 .message.typing .messageBody {
@@ -175,7 +190,18 @@ ul {
   height: 100%;
 }
 
+.shareBlock {
+  display: none;
+}
+
 .inputVid {
   width: 50%;
   left: 50%;
+  border: 10px solid black;
+  bottom: 0;
+  height: 60px;
+  outline: none;
+  padding-left: 10px;
+  position: absolute;
+  font-size: 100%;
 }
