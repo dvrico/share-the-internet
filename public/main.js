@@ -109,7 +109,7 @@ $(function() {
   function addChatTyping(data) {
     data.typing = true;
     data.message = 'is typing';
-    addChatMessage(data);
+    addChatMessage(data, {message: true});
   }
 
   function removeChatTyping(data) {
@@ -232,7 +232,7 @@ $(function() {
 
   // Whenever the server emits 'new message', update the chat body
   socket.on('new message', function(data) {
-    addChatMessage(data);
+    addChatMessage(data, {message: true});
   });
 
   // Whenever the server emits 'typing', show the typing message
