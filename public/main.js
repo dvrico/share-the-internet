@@ -25,16 +25,18 @@ $(function() {
 
   function addParticipantsMessage(data) {
     var message = ''
-    usersInChat.push(data.username)
-    for(var i = 0; i < usersInChat.length; i++) {
-      message += ' ' + usersInChat[i];
+    for(var i = 0; i < data.users.length; i++) {
+      message += ' ' + data.users[i];
     }
 
     var options = {
       userLogInfo: true
     }
-
+    if($('ul.users li:nth-child(2)')) {
+      $('ul.users li:nth-child(2)').remove();
+    }
     log(message, options);
+
   }
 
   // Sets the client's username
