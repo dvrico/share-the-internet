@@ -67,6 +67,11 @@ io.on('connection', function(socket) {
     });
   });
 
+  // when the client emits 'video click', we broadcast it to others so that their video 'clicks' as well.
+  socket.on('video click', function() {
+    socket.broadcast.emit('video click');
+  });
+
   // when the user disconnects
   socket.on('disconnect', function() {
     if (addedUser) {

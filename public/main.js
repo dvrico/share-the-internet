@@ -12,6 +12,7 @@ $(function() {
   var $loginPage = $('.login.page');
   var $chatPage = $('.chat.page');
   var $sharingPage = $('.shareBlock');
+  var $videoFrame = $('.iframe *');
 
   // Prompt for setting a username
   var username;
@@ -215,6 +216,11 @@ $(function() {
     $inputMessage.focus();
   });
 
+  // Emit click event when video is clicked
+  $videoFrame.click(function() {
+    console.log('you clicked');
+    socket.emit('video click');
+  })
 
   // Socket events
 
@@ -238,12 +244,18 @@ $(function() {
   // Whenever the server emits 'typing', show the typing message
   socket.on('typing', function(data) {
     addChatTyping(data);
-  })
+  });
 
   // Whenever the server emits 'stop typing', kill the typing message
   socket.on('stop typing', function(data) {
     removeChatTyping(data);
-  })
+  });
+
+  // Whenever the server emits 'video click', simulate a click on the iframe.
+  socket.on('video click', function() {
+    console.log('someone clicked')
+    $videoFrame.click();
+  });
 
   // Whenever the server emits 'user joined', log it in the chat body
   socket.on('user joined', function(data){
@@ -256,6 +268,6 @@ $(function() {
     log(data.username + ' left');
     addParticipantsMessage(data);
     removeChatTyping(data);
-  })
+  });
 
 });
