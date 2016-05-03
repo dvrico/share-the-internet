@@ -28,17 +28,21 @@ function onPlayerReady(event) {
 
 // The API calls this function when the player's state changes. The function
 // indicates that the user plays a video, the server should receive the update.
-// Same with user pausing a video.
+// Same with user pausing a video and video buffering.
 var done = false;
 function onPlayerStateChange(event) {
-  console.log(event.data);
   if (event.data == YT.PlayerState.PLAYING && !done) {
     // emit to server that video has started playing
     socket.emit('player playing');
+    console.log('emitting player playing from YTapi');
   }
   if (event.data == YT.PlayerState.PAUSED && !done) {
-    // emit to server that video has been paused
-    socket.emit('player paused');
+    // emit to server that video has been paused and send over current time of video
+    //var playerTime = player.getCurrentTime();
+    socket.emit('player paused', {
+      currentTime: player.getCurrentTime()
+    });
+    console.log(player.getCurrentTime());
   }
   if (event.data == YT.PlayerState.BUFFERING && !done) {
     //emit to server that video is buffering
@@ -47,12 +51,19 @@ function onPlayerStateChange(event) {
 }
 
 // socket listens for server notify them if video is playing or paused
-socket.on('player playing', function() {
-  playVideo();
+socket.on('video playing', function() {
+  console.log('received server request to play video');
+  playVideo()
 })
 
-socket.on('player paused', function() {
+socket.on('player paused', function(data) {
+  var playerTime = player.getCurrentTime()
   pauseVideo();
+  if (playerTime !== data.currentTime) {
+    player.seekTo(data.currentTime, true);
+    console.log(data.currentTime);
+    console.log("syncing to other users.");
+  }
 })
 
 socket.on('player buffering', function(data) {
@@ -60,11 +71,10 @@ socket.on('player buffering', function(data) {
 })
 
 function playVideo() {
-  console.log('video played by other user');
+  console.log('playing now');
   player.playVideo();
 }
 
 function pauseVideo() {
-  console.log('video paused by other user');
   player.pauseVideo();
 }

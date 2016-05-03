@@ -260,7 +260,23 @@ socket.on('stop typing', function(data) {
 });
 
 // Whenever the server emits 'player playing', log it into chat.
-socket.on('player playing', function(data) {
+// Do this for 'player paused' and 'player buffering' as well.
+socket.on('video playing', function(data) {
+  console.log('server emited video playing; adding it to chat')
+  addChatMessage(data, {
+    message: true,
+    serverMessage: true
+  });
+});
+
+socket.on('player paused', function(data) {
+  addChatMessage(data, {
+    message: true,
+    serverMessage: true
+  });
+});
+
+socket.on('player buffering', function(data) {
   addChatMessage(data, {
     message: true,
     serverMessage: true
