@@ -169,7 +169,7 @@ function addMessageElement(el, options) {
     $shares.append($el);
   }
   $messages[0].scrollTop = $messages[0].scrollHeight;
-  //$shares[0].scrollTop = $messages[0].scrollHeight;
+  $shares[0].scrollTop = $messages[0].scrollHeight;
 }
 
 // Prevent input from having injected markup
@@ -203,6 +203,17 @@ function checkVidInput(string) {
   } else {
     return false;
   }
+}
+
+function resetInputBox() {
+  $inputVid.val('Error! Not a vaild YouTube url.')
+  .css('color', 'red')
+  .css('font-weight', 'bold');
+  setTimeout(function() {
+    $inputVid.val('')
+    .css('color', '#000')
+    .css('font-weight', '300');
+  }, 1500);
 }
 
 // Gets the 'X is typing' messages of a user
@@ -244,7 +255,7 @@ $inputVid.keydown(function(event) {
         });
         $inputVid.val('');
       } else {
-        console.log('Error, not a valid YT url')
+        resetInputBox();
       }
     }
   }
