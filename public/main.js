@@ -7,12 +7,13 @@ var $window = $(window);
 var $usernameInput = $('.usernameInput');
 var $userLog = $('.users');
 var $messages = $('.messages');
+var $shares = $('.shares');
 var $inputMessage = $('.inputMessage');
+var $inputVid = $('.inputVid');
 
 var $loginPage = $('.login.page');
 var $chatPage = $('.chat.page');
 var $sharingPage = $('.shareBlock');
-var $videoFrame = $('.iframe *');
 
 // Prompt for setting a username
 var username;
@@ -101,9 +102,11 @@ function addChatMessage(data, options) {
     .text(data.message);
 
   var typingClass = data.typing ? 'typing' : '';
+  var vidInput = options.vidInput ? 'vidInput' : '';
   var $messageDiv = $('<li class="message"/>')
     .data('username', data.username)
     .addClass(typingClass)
+    .addClass(vidInput)
     .append($usernameDiv, $messageBodyDiv);
 
   addMessageElement($messageDiv, options);
@@ -143,7 +146,10 @@ function addMessageElement(el, options) {
     options.message = false;
   }
   if (typeof options.serverMessage === 'undefined') {
-    options.serverMessage= false;
+    options.serverMessage = false;
+  }
+  if (typeof options.queueList === 'undefined') {
+    options.queueList = false;
   }
 
   // Apply options
@@ -159,7 +165,11 @@ function addMessageElement(el, options) {
   if (options.message) {
     $messages.append($el);
   }
+  if (options.queueList) {
+    $shares.append($el);
+  }
   $messages[0].scrollTop = $messages[0].scrollHeight;
+  //$shares[0].scrollTop = $messages[0].scrollHeight;
 }
 
 // Prevent input from having injected markup
@@ -183,6 +193,15 @@ function updateTyping() {
         typing = false;
       }
     }, TYPING_TIMER_LENGTH);
+  }
+}
+
+function checkVidInput(string) {
+  var isYouTubeString = string.startsWith('https://www.youtube.com/')
+  if (isYouTubeString) {
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -212,6 +231,25 @@ $inputMessage.on('input', function() {
   updateTyping();
 })
 
+$inputVid.keydown(function(event) {
+  if (event.which === 13) {
+    if (username) {
+      if (checkVidInput($inputVid.val()) ) {
+        addChatMessage({
+          username: username,
+          message: $inputVid.val()
+        }, {
+          vidInput: true,
+          queueList: true
+        });
+        $inputVid.val('');
+      } else {
+        console.log('Error, not a valid YT url')
+      }
+    }
+  }
+})
+
 // Click events
 
 // Focus input when clicking anywhere on login page
@@ -224,11 +262,10 @@ $inputMessage.click(function() {
   $inputMessage.focus();
 });
 
-// Emit click event when video is clicked
-$videoFrame.click(function() {
-  console.log('you clicked');
-  socket.emit('video click');
-})
+//Focus input when clicking on the inputVid's border
+$inputVid.click(function() {
+  $inputVid.focus();
+});
 
 // Socket events
 
