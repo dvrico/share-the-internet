@@ -169,7 +169,7 @@ function addMessageElement(el, options) {
     $shares.append($el);
   }
   $messages[0].scrollTop = $messages[0].scrollHeight;
-  $shares[0].scrollTop = $messages[0].scrollHeight;
+  //$shares[0].scrollTop = $messages[0].scrollHeight;
 }
 
 // Prevent input from having injected markup
