@@ -223,7 +223,13 @@ function getTypingMessages(data) {
   });
 }
 
-// Keyboard events
+// Stores the user's username locally
+function storeUser(name) {
+  var userName = name;
+  window.localStorage.setItem("userName", userName);
+}
+
+// Keyboard events ----------------------------------------------------------*/
 $window.keydown(function(event) {
 
   // When the client hits ENTER on thier keyboard
@@ -261,7 +267,7 @@ $inputVid.keydown(function(event) {
   }
 })
 
-// Click events
+// Click events -------------------------------------------------------------*/
 
 // Focus input when clicking anywhere on login page
 $loginPage.click(function() {
@@ -278,13 +284,16 @@ $inputVid.click(function() {
   $inputVid.focus();
 });
 
-// Socket events
+// Socket events ------------------------------------------------------------*/
 
 // Whenever the server emits 'login', log the login message
 socket.on('login', function(data) {
   connected = true;
   // Display the welcome message
   var message = "Welcome to Sharing the Internet! Participants:";
+  // Store the username locally for yt.js
+  storeUser(data.username);
+
   log(message, {
     prepend: true,
     userLogInfo: true
@@ -310,7 +319,6 @@ socket.on('stop typing', function(data) {
 // Whenever the server emits 'player playing', log it into chat.
 // Do this for 'player paused' and 'player buffering' as well.
 socket.on('video playing', function(data) {
-  console.log('server emited video playing; adding it to chat')
   addChatMessage(data, {
     message: true,
     serverMessage: true

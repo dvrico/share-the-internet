@@ -31,22 +31,23 @@ function onPlayerReady(event) {
 // Same with user pausing a video and video buffering.
 var done = false;
 function onPlayerStateChange(event) {
+  var userName = window.localStorage.getItem("userName");
   if (event.data == YT.PlayerState.PLAYING && !done) {
     // emit to server that video has started playing
-    socket.emit('player playing');
-    console.log('emitting player playing from YTapi');
+    socket.emit('player playing', userName);
   }
   if (event.data == YT.PlayerState.PAUSED && !done) {
     // emit to server that video has been paused and send over current time of video
-    //var playerTime = player.getCurrentTime();
     socket.emit('player paused', {
+      username: userName,
       currentTime: player.getCurrentTime()
     });
+    //test for video time matching
     console.log(player.getCurrentTime());
   }
   if (event.data == YT.PlayerState.BUFFERING && !done) {
     //emit to server that video is buffering
-    socket.emit('player buffering');
+    socket.emit('player buffering', userName);
   }
 }
 
@@ -69,6 +70,26 @@ socket.on('player paused', function(data) {
 socket.on('player buffering', function(data) {
   pauseVideo();
 })
+
+// // Listen for youtube url
+// $inputVid.keydown(function(event) {
+//   if (event.which === 13) {
+//     if (username) {
+//       if (checkVidInput($inputVid.val()) ) {
+//         addChatMessage({
+//           username: username,
+//           message: $inputVid.val()
+//         }, {
+//           vidInput: true,
+//           queueList: true
+//         });
+//         $inputVid.val('');
+//       } else {
+//         resetInputBox();
+//       }
+//     }
+//   }
+// })
 
 function playVideo() {
   console.log('playing now');

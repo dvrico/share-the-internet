@@ -68,27 +68,27 @@ io.on('connection', function(socket) {
   });
 
   // when the client emits 'player playing', we broadcast it to others.
-  socket.on('player playing', function() {
+  socket.on('player playing', function(data) {
     socket.broadcast.emit('video playing', {
-      username: socket.username,
-      message: 'Someone has played the video.'
+      username: data,
+      message: ' has played the video.'
     });
   });
 
   // when the client emits 'player paused', we broadcast it to others.
   socket.on('player paused', function(data) {
     socket.broadcast.emit('player paused', {
-      username: socket.username,
-      message: 'Someone has paused the video.',
+      username: data.username,
+      message: ' has paused the video.',
       currentTime: data.currentTime
     });
   });
 
   // when the client emits 'player buffering', we broadcast it to others so that thier vids can wait.
-  socket.on('player buffering', function() {
+  socket.on('player buffering', function(data) {
     socket.broadcast.emit('player buffering', {
-      username: socket.username,
-      message: 'Someone is buffering, hold on..'
+      username: data,
+      message: ' is buffering, hold on..'
     });
   });
 
