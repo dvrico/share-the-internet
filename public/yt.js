@@ -1,5 +1,12 @@
 
+// Variables ----------------------------------------------------------------*/
+
 var socket = io();
+var $inputVid = $('.inputVid');
+
+var videoQueue = [];
+
+// Set up for YT API --------------------------------------------------------*/
 
 // Loads the iframe player API code async-ly
 var tag = document.createElement('script');
@@ -26,6 +33,8 @@ function onPlayerReady(event) {
   event.target.stopVideo();
 }
 
+// YT State Change Listener -------------------------------------------------*/
+
 // The API calls this function when the player's state changes. The function
 // indicates that the user plays a video, the server should receive the update.
 // Same with user pausing a video and video buffering.
@@ -49,7 +58,45 @@ function onPlayerStateChange(event) {
     //emit to server that video is buffering
     socket.emit('player buffering', userName);
   }
+  if (event.data == YT.PlayerState.ENDED) {
+    //done = true;
+    var nextVideo = videoQueue.shift();
+    player.loadVideoById(nextVideo);
+  }
 }
+
+// Functions ----------------------------------------------------------------*/
+
+function playVideo() {
+  console.log('playing now');
+  player.playVideo();
+}
+
+function pauseVideo() {
+  player.pauseVideo();
+}
+
+function checkVidInput(string) {
+  var isYouTubeString = string.startsWith('https://www.youtube.com/')
+  if (isYouTubeString) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function addToQueue(string) {
+  videoQueue.push(string);
+  console.log(videoQueue);
+}
+
+function parse(url) {
+  var start = url.indexOf('=');
+  start++; // Start slice after equals sign instead of on equals sign
+  return url.slice(start);
+}
+
+// Socket events ------------------------------------------------------------*/
 
 // socket listens for server notify them if video is playing or paused
 socket.on('video playing', function() {
@@ -71,31 +118,15 @@ socket.on('player buffering', function(data) {
   pauseVideo();
 })
 
-// // Listen for youtube url
-// $inputVid.keydown(function(event) {
-//   if (event.which === 13) {
-//     if (username) {
-//       if (checkVidInput($inputVid.val()) ) {
-//         addChatMessage({
-//           username: username,
-//           message: $inputVid.val()
-//         }, {
-//           vidInput: true,
-//           queueList: true
-//         });
-//         $inputVid.val('');
-//       } else {
-//         resetInputBox();
-//       }
-//     }
-//   }
-// })
+// Keyboard events ----------------------------------------------------------*/
 
-function playVideo() {
-  console.log('playing now');
-  player.playVideo();
-}
-
-function pauseVideo() {
-  player.pauseVideo();
-}
+// Listen for a youtube url on input field
+$inputVid.keydown(function(event) {
+  if (event.which === 13) {
+    if (checkVidInput($inputVid.val()) ) {
+      var YTstring = parse($inputVid.val());
+      console.log(YTstring);
+      addToQueue(YTstring);
+    }
+  }
+})

@@ -1,8 +1,9 @@
 $(function() {
+
+// Variables ----------------------------------------------------------------*/
 var FADE_TIME = 150; // in ms
 var TYPING_TIMER_LENGTH = 400; // in ms
 
-// Initialize variables
 var $window = $(window);
 var $usernameInput = $('.usernameInput');
 var $userLog = $('.users');
@@ -25,6 +26,7 @@ var $currentInput = $usernameInput.focus();
 
 var socket = io();
 
+/* Functions ----------------------------------------------------------------*/
 function addParticipantsMessage(data) {
   var message = ''
   // Add all users in chat to message string
@@ -230,6 +232,7 @@ function storeUser(name) {
 }
 
 // Keyboard events ----------------------------------------------------------*/
+
 $window.keydown(function(event) {
 
   // When the client hits ENTER on thier keyboard
