@@ -27,6 +27,7 @@ var $currentInput = $usernameInput.focus();
 var socket = io();
 
 /* Functions ----------------------------------------------------------------*/
+
 function addParticipantsMessage(data) {
   var message = ''
   // Add all users in chat to message string
@@ -172,6 +173,10 @@ function addMessageElement(el, options) {
   }
   $messages[0].scrollTop = $messages[0].scrollHeight;
   //$shares[0].scrollTop = $messages[0].scrollHeight;
+}
+
+function removeQueueItem(name) {
+  $('.vidInput:first-child').fadeOut(1000).remove();
 }
 
 // Prevent input from having injected markup
@@ -340,6 +345,10 @@ socket.on('player buffering', function(data) {
     message: true,
     serverMessage: true
   });
+});
+
+socket.on('next video', function(data) {
+  removeQueueItem(data.videoId);
 });
 
 // Whenever the server emits 'user joined', log it in the chat body

@@ -60,8 +60,11 @@ function onPlayerStateChange(event) {
   }
   if (event.data == YT.PlayerState.ENDED) {
     //done = true;
-    var nextVideo = videoQueue.shift();
-    player.loadVideoById(nextVideo);
+    if (videoQueue.length >= 1) {
+      var nextVideo = videoQueue.shift();
+      player.loadVideoById(nextVideo);
+      socket.emit('next video', nextVideo);
+    }
   }
 }
 

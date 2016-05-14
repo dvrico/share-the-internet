@@ -10,17 +10,21 @@ server.listen(port, function() {
   console.log('Server listening at port %d', port);
 });
 
-// Routing
+// Routing ------------------------------------------------------------------*/
 
 app.use(express.static(__dirname + '/public'));
 
-// Chatroom
+// Chatroom Variables -------------------------------------------------------*/
 
 var numUsers = 0;
 var usersInChat = [];
 
+// Socket events ------------------------------------------------------------*/
+
 io.on('connection', function(socket) {
   var addedUser = false;
+
+// Chatroom socket events ---------------------------------------------------*/
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function(data) {
@@ -67,6 +71,27 @@ io.on('connection', function(socket) {
     });
   });
 
+  // when the user disconnects
+  socket.on('disconnect', function() {
+    if (addedUser) {
+      --numUsers;
+      for (var i = 0; i < usersInChat.length; i++) {
+        if (socket.username === usersInChat[i]) {
+          usersInChat.splice(i, 1);
+        }
+      }
+
+      //echo globally that this client has left
+      socket.broadcast.emit('user left', {
+        username: socket.username,
+        numUsers: numUsers,
+        users: usersInChat
+      });
+    }
+  });
+
+// YT socket events ---------------------------------------------------------*/
+
   // when the client emits 'player playing', we broadcast it to others.
   socket.on('player playing', function(data) {
     socket.broadcast.emit('video playing', {
@@ -92,23 +117,11 @@ io.on('connection', function(socket) {
     });
   });
 
-  // when the user disconnects
-  socket.on('disconnect', function() {
-    if (addedUser) {
-      --numUsers;
-      for (var i = 0; i < usersInChat.length; i++) {
-        if (socket.username === usersInChat[i]) {
-          usersInChat.splice(i, 1);
-        }
-      }
-
-      //echo globally that this client has left
-      socket.broadcast.emit('user left', {
-        username: socket.username,
-        numUsers: numUsers,
-        users: usersInChat
-      });
-    }
+  // when the yt client emits 'next video', broadcast it to others to update the queue list.
+  socket.on('next video', function(data) {
+    socket.broadcast.emit('next video', {
+      videoId: data
+    });
   });
 
 });
